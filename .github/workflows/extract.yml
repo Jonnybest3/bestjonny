@@ -1,0 +1,29 @@
+name: Extract Earn3X
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  extract:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Extract Earn3X project
+        run: |
+          unzip -q earn3x-platform.zip -d extracted
+          cp -R extracted/earn3x-platform/. .
+          rm -rf extracted earn3x-platform.zip
+
+      - name: Commit extracted project
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git diff --cached --quiet || git commit -m "Add Earn3X platform files"
+          git push
